@@ -1,0 +1,15 @@
+on: [push, pull_request]
+env:
+  APP_NAME: 'suaggarContainerApp'
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+
+    # checkout the repo testd
+    - uses: actions/checkout@master
+
+    - uses: ./
+      with:
+        folder-path: ./Appication
+        json-files: './*.json'

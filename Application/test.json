@@ -1,0 +1,21 @@
+{
+  "auth": {
+             "key1":"value1",
+             "key2":"value2",
+             "endpoints": {
+                              "http://contoso.com/": "12fbdc54-4ff7-48bc-bffa-35bd3ffcd2cf",
+                              "https://ms.contoso.com/": "12fbdc53-4ff7-48bc-bffa-35bd3ffcd2cf"
+             },
+             "key4":"value4"
+  },
+  "syncMethods": [
+    {
+      "SourceId": 1,
+      "Folders": [" abc.txt", "def.txt"]
+    },
+    {
+      "SourceId": 2,
+      "Folders": [" abc.txt", "def.txt"]
+    }
+  ]
+}
