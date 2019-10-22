@@ -9,7 +9,13 @@ jobs:
     # checkout the repo testd
     - uses: actions/checkout@master
 
-    - uses: ./
+    - run: |
+        cat ./Application/test.json
+
+    - uses: ./variableSubstitution
       with:
         folder-path: ./Appication
         json-files: './*.json'
+
+    - run: |
+        cat ./Application/test.json
