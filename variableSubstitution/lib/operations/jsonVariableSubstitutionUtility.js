@@ -23,9 +23,9 @@ function createEnvTree(envVariables) {
             '__proto__': null
         }
     };
-    for (let envVariable of envVariables) {
+    for (let [key, value] of envVariables.entries()) {
         var envVarTreeIterator = envVarTree;
-        var envVariableNameArray = (envVariable.name).split('.');
+        var envVariableNameArray = key.split('.');
         for (let variableName of envVariableNameArray) {
             if (envVarTreeIterator.child[variableName] === undefined || typeof envVarTreeIterator.child[variableName] === 'function') {
                 envVarTreeIterator.child[variableName] = {
@@ -37,7 +37,7 @@ function createEnvTree(envVariables) {
             envVarTreeIterator = envVarTreeIterator.child[variableName];
         }
         envVarTreeIterator.isEnd = true;
-        envVarTreeIterator.value = envVariable.value;
+        envVarTreeIterator.value = value;
     }
     return envVarTree;
 }
