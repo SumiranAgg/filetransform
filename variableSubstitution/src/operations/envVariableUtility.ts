@@ -9,11 +9,11 @@ export function isPredefinedVariable(variable: string): boolean {
 }
 
 export function getVariableMap() {
-    var variableMap = {};
+    var variableMap = new Map();
     var variables = process.env;
     Object.keys(variables).forEach(key => {
         if(!isPredefinedVariable(key)) {
-            variableMap[key] = variables[key];
+            variableMap.set(key, variables[key]);
         }
     });
     return variableMap;
