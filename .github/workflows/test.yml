@@ -16,6 +16,8 @@ jobs:
       with:
         folder-path: ./Appication
         json-files: 'test.json'
-
+      env:
+        auth.key1: "values1"
+        auth.key2: "values2"
     - run: |
         cat ./Application/test.json
