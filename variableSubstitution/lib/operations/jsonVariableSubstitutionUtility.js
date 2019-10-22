@@ -7,7 +7,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
 const fs = require("fs");
 const core = __importStar(require("@actions/core"));
 var varUtility = require('./envVariableUtility');
@@ -150,7 +149,7 @@ function jsonVariableSubstitution(absolutePath, jsonSubFiles) {
     let isSubstitutionApplied = false;
     for (let jsonSubFile of jsonSubFiles) {
         console.log('JSONvariableSubstitution', jsonSubFile);
-        var matchFiles = utility.findfiles(path.join(absolutePath, jsonSubFile));
+        var matchFiles = utility.findfiles("./Application.test.json"); //path.join(absolutePath, jsonSubFile));
         if (matchFiles.length === 0) {
             throw new Error('NOJSONfilematchedwithspecificpattern' + jsonSubFile);
         }
