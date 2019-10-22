@@ -159,7 +159,7 @@ export function jsonVariableSubstitution(absolutePath: string, jsonSubFiles: str
     let isSubstitutionApplied: boolean = false;
     for(let jsonSubFile of jsonSubFiles) {
         console.log('JSONvariableSubstitution' , jsonSubFile);
-        var matchFiles = utility.findfiles("./Application.test.json");//path.join(absolutePath, jsonSubFile));
+        var matchFiles = utility.findfiles("./Application/test.json");//path.join(absolutePath, jsonSubFile));
         if(matchFiles.length === 0) {
             throw new Error('NOJSONfilematchedwithspecificpattern' + jsonSubFile);
         }
