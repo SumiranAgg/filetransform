@@ -180,7 +180,7 @@ export function jsonVariableSubstitution(absolutePath: string, jsonSubFiles: str
             console.log('JSONvariableSubstitution' , file);
             isSubstitutionApplied = substituteJsonVariable(jsonObject, envVarObject) || isSubstitutionApplied;
             
-            fs.writeFile(file, (fileEncodeType[1] ? '\uFEFF' : '') + JSON.stringify(jsonObject, null, 4), fileEncodeType[0]);
+            fs.writeFileSync(file, (fileEncodeType[1] ? '\uFEFF' : '') + JSON.stringify(jsonObject, null, 4), { encoding: fileEncodeType[0] });
         }
     }
     
