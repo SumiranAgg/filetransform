@@ -15,7 +15,7 @@ jobs:
     - uses: ./variableSubstitution
       with:
         folder-path: ./Appication
-        json-files: '**.json'
+        json-files: 'test.json'
 
     - run: |
         cat ./Application/test.json
