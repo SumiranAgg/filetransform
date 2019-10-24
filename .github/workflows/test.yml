@@ -1,6 +1,4 @@
 on: [push, pull_request]
-env:
-  APP_NAME: 'suaggarContainerApp'
 jobs:
   build-and-deploy:
     runs-on: windows-latest
@@ -19,5 +17,6 @@ jobs:
       env:
         auth.key1: "values1"
         auth.key2: "values2"
+
     - run: |
         cat ./Application/test.json

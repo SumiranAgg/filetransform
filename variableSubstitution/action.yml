@@ -1,21 +1,10 @@
 # action.yml
-name: 'File Transform'
-description: 'Apply XMl transformations or substitute tokens in XML/JSON or YAML files'
+name: 'Variable Substitution'
+description: 'Apply Variable sustitution in XML/JSON or YAML files'
 inputs: 
-  folder-path:
-    description: 'File path to the package or a folder. For zipped folders, the contents are extracted to a temporary location, transformations are applied, and the results zipped in original location.'
-    required: false
-    default: '.' # root 
-  xml-transformation-rules:
-    description: 'Provide a newline separated list of transformation file rules using the syntax</br>-transform <path to the transform file> -xml <path to the source configuration file> -result <path to the result file></br>The result file path is optional and, if not specified, the source configuration file will be replaced with the transformed result file.'
+  files:
+    description: 'comma separated list of XML/JSON/YAML files in which tokens are to be substituted. Files names must be specified relative to the folder-path.'
     required: true
-    default: '-tarnsform **\*.Release.config -xml **\*.config'
-  json-files:
-    description: 'comma separated list of JSON files in which tokens are to be substituted. Files names must be specified relative to the folder-path.'
-  xml-files:
-    description: 'comma separated list of XML files in which tokens are to be substituted. Files names must be specified relative to the folder-path.'
-  yaml-files:
-    desciription: 'comma separated list of YAML files in which tokens are to be substituted. Files names must be specified relative to the folder-path.'
 runs:
   using: 'node12'
-  main: 'lib/filetransform.js'
+  main: 'lib/variableSubstitution.js'

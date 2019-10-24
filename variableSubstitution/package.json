@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/SumiranAgg/filetransform#readme",
   "devDependencies": {
-    "@types/node": "^12.11.2",
+    "@types/node": "^12.11.6",
     "typescript": "^3.6.4"
   },
   "dependencies": {
