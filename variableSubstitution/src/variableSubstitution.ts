@@ -8,7 +8,7 @@ import { findfiles } from "./operations/utility";
 
 import fs = require('fs');
 var yaml = require('js-yaml');
-var fileEncoding = require('./fileEncodingUtility');
+var fileEncoding = require('./operations/fileEncodingUtility');
 
 async function run() {
     let filesInput = core.getInput("files", { required: true });

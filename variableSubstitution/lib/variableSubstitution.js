@@ -24,7 +24,7 @@ const xmlVariableSubstitution_1 = require("./operations/xmlVariableSubstitution"
 const utility_1 = require("./operations/utility");
 const fs = require("fs");
 var yaml = require('js-yaml');
-var fileEncoding = require('./fileEncodingUtility');
+var fileEncoding = require('./operations/fileEncodingUtility');
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         let filesInput = core.getInput("files", { required: true });
