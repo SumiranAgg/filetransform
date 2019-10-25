@@ -34,7 +34,7 @@ function run() {
 function segregateFilesAndSubstitute(files) {
     let isSubstitutionApplied = false;
     for (let file in files) {
-        let matchedFiles = utility_1.findfiles(file);
+        let matchedFiles = utility_1.findfiles(file.trim());
         if (matchedFiles.length == 0) {
             core.error('No file matched with specific pattern: ' + file);
             continue;

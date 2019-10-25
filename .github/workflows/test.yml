@@ -9,13 +9,19 @@ jobs:
 
     - run: |
         cat ./Application/test.json
+        cat ./Application/test1.yaml
+        cat ./Application/SampleWebApplication/Web.config
 
     - uses: ./variableSubstitution
       with:
-        files: './Application/test.json'
+        files: './Application/test.json, ./Application/test1.yaml, ./Application/**/Web.config'
       env:
         auth.key1: "values1"
         auth.key2: "values2"
+        ClientValidationEnabled: "false"
+        auth.key3.subkey1: "hi"
 
     - run: |
         cat ./Application/test.json
+        cat ./Application/test1.yaml
+        cat ./Application/SampleWebApplication/Web.config

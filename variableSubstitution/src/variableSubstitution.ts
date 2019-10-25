@@ -25,7 +25,7 @@ console.log(files);
 function segregateFilesAndSubstitute(files: string[]) {
     let isSubstitutionApplied: boolean = false;
     for(let file in files){
-        let matchedFiles = findfiles(file);
+        let matchedFiles = findfiles(file.trim());
         if(matchedFiles.length == 0) {
             core.error('No file matched with specific pattern: ' + file);
             continue;
