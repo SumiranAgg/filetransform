@@ -3,25 +3,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
 function detectFileEncodingWithBOM(fileName, buffer) {
     core.debug('Detecting file encoding using BOM');
-    if (buffer.slice(0, 3).equals(new Buffer([239, 187, 191]))) {
+    if (buffer.slice(0, 3).equals(Buffer.from([239, 187, 191]))) {
         return {
             encoding: 'utf-8',
             withBOM: true
         };
     }
-    else if (buffer.slice(0, 4).equals(new Buffer([255, 254, 0, 0]))) {
+    else if (buffer.slice(0, 4).equals(Buffer.from([255, 254, 0, 0]))) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32LE. Variable substitution is not supported with file encoding UTF-32LE. Supported encodings are UTF-8 and UTF-16LE.`);
     }
-    else if (buffer.slice(0, 2).equals(new Buffer([254, 255]))) {
+    else if (buffer.slice(0, 2).equals(Buffer.from([254, 255]))) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32BE. Variable substitution is not supported with file encoding UTF-32BE. Supported encodings are UTF-8 and UTF-16LE.`);
     }
-    else if (buffer.slice(0, 2).equals(new Buffer([255, 254]))) {
+    else if (buffer.slice(0, 2).equals(Buffer.from([255, 254]))) {
         return {
             encoding: 'utf-16le',
             withBOM: true
         };
     }
-    else if (buffer.slice(0, 4).equals(new Buffer([0, 0, 254, 255]))) {
+    else if (buffer.slice(0, 4).equals(Buffer.from([0, 0, 254, 255]))) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32BE. Variable substitution is not supported with file encoding UTF-32BE. Supported encodings are UTF-8 and UTF-16LE.`);
     }
     core.debug('Unable to detect File encoding using BOM');
