@@ -1,5 +1,3 @@
-import fs = require('fs');
-
 import * as core from '@actions/core';
 
 import { LtxDomUtility } from "./ltxDomUtility";
