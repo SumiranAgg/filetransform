@@ -7,6 +7,7 @@ import { XmlSubstitution } from './operations/xmlVariableSubstitution';
 import { findfiles } from "./operations/utility";
 
 import fs = require('fs');
+import path = require('path');
 import yaml = require('js-yaml');
 import fileEncoding = require('./operations/fileEncodingUtility');
 
@@ -24,7 +25,7 @@ async function run() {
 function segregateFilesAndSubstitute(files: string[]) {
     let isSubstitutionApplied: boolean = false;
     for(let file of files){
-        let matchedFiles = findfiles(file.trim());
+        let matchedFiles = findfiles(path.join(process.env.GITHUB_WORKSPACE, file.trim()));
         if(matchedFiles.length == 0) {
             core.error('No file matched with specific pattern: ' + file);
             continue;

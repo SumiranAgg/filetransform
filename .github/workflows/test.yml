@@ -14,7 +14,7 @@ jobs:
 
     - uses: ./variableSubstitution
       with:
-        files: './Application/*.json, ./Application/*.yaml, ./Application/**/*.config'
+        files: 'Application/*.json, Application/*.yaml, Application/**/*.config'
       env:
         auth.key1: "values1"
         auth.key2: "values2"
