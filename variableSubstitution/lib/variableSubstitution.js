@@ -22,7 +22,6 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         let filesInput = core.getInput("files", { required: true });
         let files = filesInput.split(",");
-        console.log(files);
         if (files.length > 0) {
             segregateFilesAndSubstitute(files);
         }
@@ -98,9 +97,9 @@ function segregateFilesAndSubstitute(files) {
                 throw new Error("Could not parse file: " + file + "\n" + parseException);
             }
         }
-        if (!isSubstitutionApplied) {
-            throw new Error("Failed to apply variable substitution");
-        }
+    }
+    if (!isSubstitutionApplied) {
+        throw new Error("Failed to apply variable substitution");
     }
 }
 var fileContentCache = new Map();

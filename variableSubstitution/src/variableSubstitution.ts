@@ -13,7 +13,6 @@ import fileEncoding = require('./operations/fileEncodingUtility');
 async function run() {
     let filesInput = core.getInput("files", { required: true });
     let files = filesInput.split(",");
-console.log(files);
     if(files.length > 0){
         segregateFilesAndSubstitute(files);
     }
@@ -89,10 +88,10 @@ function segregateFilesAndSubstitute(files: string[]) {
                 throw new Error("Could not parse file: " + file + "\n" + parseException);
             }
         }
+    }
 
-        if(!isSubstitutionApplied) {
-            throw new Error("Failed to apply variable substitution");
-        }
+    if(!isSubstitutionApplied) {
+        throw new Error("Failed to apply variable substitution");
     }
 }
 

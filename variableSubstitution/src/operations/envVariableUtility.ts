@@ -42,7 +42,7 @@ export class EnvTreeUtility {
 
     public static getEnvVarTree() {
         let util = new EnvTreeUtility();
-        if(!!util.envVarTree) {
+        if(!util.envVarTree) {
             util.envVarTree = util.createEnvTree(getVariableMap());
         }
 
