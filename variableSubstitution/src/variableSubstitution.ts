@@ -227,3 +227,7 @@ function replaceEscapeXMLCharacters(xmlDOMNode) {
         }
     }
 }
+
+run().catch((error) => {	
+    core.setFailed(error);	
+});
