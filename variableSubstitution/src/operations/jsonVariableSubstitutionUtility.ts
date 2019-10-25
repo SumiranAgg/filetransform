@@ -1,5 +1,3 @@
-import fs = require('fs');
-
 import * as core from '@actions/core';
 
 import { EnvTreeUtility } from "./envVariableUtility";
@@ -9,7 +7,7 @@ export class JsonSubstitution {
         this.envTreeUtil = new EnvTreeUtility();
     }
     
-    private substituteJsonVariable(jsonObject, envObject) {
+    substituteJsonVariable(jsonObject, envObject) {
         let isValueChanged: boolean = false;
         for(var jsonChild in jsonObject) {
             var jsonChildArray = jsonChild.split('.');
@@ -50,74 +48,6 @@ export class JsonSubstitution {
             }
         }
         return isValueChanged;
-    }
-    
-    stripJsonComments(content) {
-        if (!content || (content.indexOf("//") < 0 && content.indexOf("/*") < 0)) {
-            return content;
-        }
-    
-        var currentChar;
-        var nextChar;
-        var insideQuotes = false;
-        var contentWithoutComments = '';
-        var insideComment = 0;
-        var singlelineComment = 1;
-        var multilineComment = 2;
-    
-        for (var i = 0; i < content.length; i++) {
-            currentChar = content[i];
-            nextChar = i + 1 < content.length ? content[i + 1] : "";
-    
-            if (insideComment) {
-                if (insideComment == singlelineComment && (currentChar + nextChar === '\r\n' || currentChar === '\n')) {
-                    i--;
-                    insideComment = 0;
-                    continue;
-                }
-    
-                if (insideComment == multilineComment && currentChar + nextChar === '*/') {
-                    i++;
-                    insideComment = 0;
-                    continue;
-                }
-    
-            } else {
-                if (insideQuotes && currentChar == "\\") {
-                    contentWithoutComments += currentChar + nextChar;
-                    i++; // Skipping checks for next char if escaped
-                    continue;
-                }
-                else {
-                    if (currentChar == '"') {
-                        insideQuotes = !insideQuotes;
-                    }
-    
-                    if (!insideQuotes) {
-                        if (currentChar + nextChar === '//') {
-                            insideComment = singlelineComment;
-                            i++;
-                        }
-    
-                        if (currentChar + nextChar === '/*') {
-                            insideComment = multilineComment;
-                            i++;
-                        }
-                    }
-                }
-            }
-    
-            if (!insideComment) {
-                contentWithoutComments += content[i];
-            }
-        }
-    
-        return contentWithoutComments;
-    }
-    
-    jsonVariableSubstitution(file: string, jsonObject) {
-        console.log('JSONvariableSubstitution' , file);
-        return this.substituteJsonVariable(jsonObject, EnvTreeUtility.getEnvVarTree());   
     }
 
     private envTreeUtil: EnvTreeUtility;

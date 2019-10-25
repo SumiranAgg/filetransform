@@ -12,8 +12,7 @@ jobs:
 
     - uses: ./variableSubstitution
       with:
-        folder-path: ./Application
-        json-files: 'test.json'
+        files: './Application/test.json'
       env:
         auth.key1: "values1"
         auth.key2: "values2"

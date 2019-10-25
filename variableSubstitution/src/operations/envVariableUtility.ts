@@ -19,6 +19,19 @@ export function getVariableMap() {
     return variableMap;
 }
 
+export function isEmpty(object){
+    if(object == null || object == "")
+        return true;
+    return false;
+}
+
+export function isObject(object){
+    if(object == null || object == "" || typeof(object) != 'object'){
+        return false;
+    }
+    return true;
+}
+
 interface varTreeNode {
     value: any,
     isEnd: boolean,
