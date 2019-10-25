@@ -18,7 +18,7 @@ jobs:
       env:
         auth.key1: "values1"
         auth.key2: "values2"
-        DefaultConnection: "Data Source=(ProdDB)\MSSQLProdDB;AttachFileName=Local.mdf"
+        DefaultConnection: 'Data Source=(ProdDB)\MSSQLProdDB;AttachFileName=Local.mdf'
         auth.key3.subkey1: "hi"
         AdminUserName: "ProdAdminName"
         AdminPassword: "mypassword"
