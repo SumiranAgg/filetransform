@@ -2,7 +2,7 @@ import core = require('@actions/core');
 
 import { EnvTreeUtility } from "./operations/envVariableUtility";
 import { JsonSubstitution } from './operations/jsonVariableSubstitutionUtility';
-import { LtxDomUtility } from "./operations/ltxDomUtility";
+import { XmlDomUtility } from "./operations/xmlDomUtility";
 import { XmlSubstitution } from './operations/xmlVariableSubstitution';
 import { findfiles } from "./operations/utility";
 
@@ -52,12 +52,12 @@ function segregateFilesAndSubstitute(files: string[]) {
             }
             else if(isXml(file, fileContent)) {
                 console.log("Applying variable substitution on XML file: " + file);   
-                let ltxDomUtilityInstance: LtxDomUtility = fileContentCache.get(file);
-                let xmlSubstitution = new XmlSubstitution(ltxDomUtilityInstance);
+                let xmlDomUtilityInstance: XmlDomUtility = fileContentCache.get(file);
+                let xmlSubstitution = new XmlSubstitution(xmlDomUtilityInstance);
                 let isXmlSubstitutionApplied = xmlSubstitution.substituteXmlVariables();
                 if(isXmlSubstitutionApplied) {
-                    let xmlDocument = replaceEscapeXMLCharacters(ltxDomUtilityInstance.getXmlDom());
-                    var domContent = ( fileEncodeType.withBOM? '\uFEFF' : '' ) + ltxDomUtilityInstance.getContentWithHeader(xmlDocument);
+                    let xmlDocument = replaceEscapeXMLCharacters(xmlDomUtilityInstance.getXmlDom());
+                    var domContent = ( fileEncodeType.withBOM? '\uFEFF' : '' ) + xmlDomUtilityInstance.getContentWithHeader(xmlDocument);
                     for(var replacableTokenValue in xmlSubstitution.replacableTokenValues) {
                         core.debug('Substituting original value in place of temp_name: ' + replacableTokenValue);
                         domContent = domContent.split(replacableTokenValue).join(xmlSubstitution.replacableTokenValues[replacableTokenValue]);
@@ -129,7 +129,7 @@ function isYaml(file: string, content: string) : boolean {
 
 function isXml(file: string, content: string): boolean {
     try{
-        let ltxDomUtiltiyInstance = new LtxDomUtility(content);
+        let ltxDomUtiltiyInstance = new XmlDomUtility(content);
         if(!fileContentCache.has(file)) {
             fileContentCache.set(file, ltxDomUtiltiyInstance);
         }

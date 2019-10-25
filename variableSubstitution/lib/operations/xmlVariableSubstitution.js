@@ -4,22 +4,22 @@ const core = require("@actions/core");
 var envVarUtility = require('./envVariableUtility');
 const tags = ["applicationSettings", "appSettings", "connectionStrings", "configSections"];
 class XmlSubstitution {
-    constructor(ltxDomUtilityInstance) {
+    constructor(xmlDomUtilityInstance) {
         this.replacableTokenValues = { "APOS_CHARACTER_TOKEN": "'" };
         this.variableMap = envVarUtility.getVariableMap();
-        this.ltxDomUtility = ltxDomUtilityInstance;
+        this.xmlDomUtility = xmlDomUtilityInstance;
     }
     substituteXmlVariables() {
         var isSubstitutionApplied = false;
         for (var tag of tags) {
-            var nodes = this.ltxDomUtility.getElementsByTagName(tag);
+            var nodes = this.xmlDomUtility.getElementsByTagName(tag);
             if (nodes.length == 0) {
                 core.debug("Unable to find node with tag '" + tag + "' in provided xml file.");
                 continue;
             }
             for (var xmlNode of nodes) {
                 if (envVarUtility.isObject(xmlNode)) {
-                    console.log('Processing substitution for xml node: ', xmlNode.name);
+                    console.log('Processing substitution for xml node: ', xmlNode.nodeName);
                     try {
                         if (xmlNode.name == "configSections") {
                             isSubstitutionApplied = this.updateXmlConfigNodeAttribute(xmlNode) || isSubstitutionApplied;
@@ -32,7 +32,7 @@ class XmlSubstitution {
                         }
                     }
                     catch (error) {
-                        core.debug("Error occurred while processing xml node : " + xmlNode.name);
+                        core.debug("Error occurred while processing xml node : " + xmlNode.nodeName);
                         core.debug(error);
                     }
                 }
@@ -42,12 +42,12 @@ class XmlSubstitution {
     }
     updateXmlConfigNodeAttribute(xmlNode) {
         var isSubstitutionApplied = false;
-        var sections = this.ltxDomUtility.getChildElementsByTagName(xmlNode, "section");
+        var sections = this.xmlDomUtility.getChildElementsByTagName(xmlNode, "section");
         for (var section of sections) {
             if (envVarUtility.isObject(section)) {
                 var sectionName = section.attr('name');
                 if (!envVarUtility.isEmpty(sectionName)) {
-                    var customSectionNodes = this.ltxDomUtility.getElementsByTagName(sectionName);
+                    var customSectionNodes = this.xmlDomUtility.getElementsByTagName(sectionName);
                     if (customSectionNodes.length != 0) {
                         var customNode = customSectionNodes[0];
                         isSubstitutionApplied = this.updateXmlNodeAttribute(customNode) || isSubstitutionApplied;
@@ -63,41 +63,49 @@ class XmlSubstitution {
             core.debug("Provided node is empty or a comment.");
             return isSubstitutionApplied;
         }
-        var xmlDomNodeAttributes = xmlDomNode.attrs;
         const ConfigFileAppSettingsToken = 'CONFIG_FILE_SETTINGS_TOKEN';
-        for (var attributeName in xmlDomNodeAttributes) {
-            var attributeNameValue = (attributeName === "key" || attributeName == "name") ? xmlDomNodeAttributes[attributeName] : attributeName;
-            var attributeName = (attributeName === "key" || attributeName == "name") ? "value" : attributeName;
-            if (this.variableMap[attributeNameValue] != undefined) {
-                var ConfigFileAppSettingsTokenName = ConfigFileAppSettingsToken + '(' + attributeNameValue + ')';
-                let isValueReplaced = false;
-                if (xmlDomNode.getAttr(attributeName) != undefined) {
-                    console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
-                    xmlDomNode.attr(attributeName, ConfigFileAppSettingsTokenName);
-                    isValueReplaced = true;
-                }
-                else {
-                    var children = xmlDomNode.children;
-                    for (var childNode of children) {
-                        if (envVarUtility.isObject(childNode) && childNode.name == attributeName) {
-                            if (childNode.children.length === 1) {
-                                console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
-                                childNode.children[0] = ConfigFileAppSettingsTokenName;
-                                isValueReplaced = true;
+        if (xmlDomNode.attributes) {
+            let xmlDomNodeAttributes = xmlDomNode.attributes;
+            for (let i = 0; i < xmlDomNodeAttributes.length; i++) {
+                let attribute = xmlDomNodeAttributes[i];
+                let attributeNameValue = (attribute.nodeName === "key" || attribute.nodeName == "name") ? attribute.nodeValue : attribute.nodeName;
+                let attributeName = (attribute.nodeName === "key" || attribute.nodeName == "name") ? "value" : attribute.nodeName;
+                if (this.variableMap[attributeNameValue] != undefined) {
+                    let ConfigFileAppSettingsTokenName = ConfigFileAppSettingsToken + '(' + attributeNameValue + ')';
+                    let isValueReplaced = false;
+                    if (xmlDomNode.hasAttribute(attributeName)) {
+                        console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
+                        xmlDomNode.setAttribute(attributeName, ConfigFileAppSettingsTokenName);
+                        isValueReplaced = true;
+                    }
+                    else if (xmlDomNode.hasChildNodes()) {
+                        let children = xmlDomNode.childNodes;
+                        for (let childs = 0; childs < children.length; childs++) {
+                            let childNode = children[childs];
+                            if (envVarUtility.isObject(childNode) && childNode.nodeName == attributeName) {
+                                if (childNode.childNodes.length === 1) {
+                                    console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
+                                    childNode.childNodes[0].nodeValue = ConfigFileAppSettingsTokenName;
+                                    childNode.childNodes[0].data = ConfigFileAppSettingsTokenName;
+                                    isValueReplaced = true;
+                                }
                             }
                         }
                     }
-                }
-                if (isValueReplaced) {
-                    this.replacableTokenValues[ConfigFileAppSettingsTokenName] = this.variableMap[attributeNameValue].replace(/"/g, "'");
-                    isSubstitutionApplied = true;
+                    if (isValueReplaced) {
+                        this.replacableTokenValues[ConfigFileAppSettingsTokenName] = this.variableMap[attributeNameValue].replace(/"/g, "'");
+                        isSubstitutionApplied = true;
+                    }
                 }
             }
         }
-        var children = xmlDomNode.children;
-        for (var childNode of children) {
-            if (envVarUtility.isObject(childNode)) {
-                isSubstitutionApplied = this.updateXmlNodeAttribute(childNode) || isSubstitutionApplied;
+        if (xmlDomNode.hasChildNodes()) {
+            let children = xmlDomNode.childNodes;
+            for (let childs = 0; childs < children.length; childs++) {
+                let childNode = children[childs];
+                if (envVarUtility.isObject(childNode)) {
+                    isSubstitutionApplied = this.updateXmlNodeAttribute(childNode) || isSubstitutionApplied;
+                }
             }
         }
         return isSubstitutionApplied;
@@ -126,10 +134,13 @@ class XmlSubstitution {
                 isSubstitutionApplied = true;
             }
         }
-        var children = xmlDomNode.children;
-        for (var childNode of children) {
-            if (envVarUtility.isObject(childNode)) {
-                isSubstitutionApplied = this.updateXmlConnectionStringsNodeAttribute(childNode) || isSubstitutionApplied;
+        if (xmlDomNode.hasChildNodes()) {
+            let children = xmlDomNode.childNodes;
+            for (let childs = 0; childs < children.length; childs++) {
+                let childNode = children[childs];
+                if (envVarUtility.isObject(childNode)) {
+                    isSubstitutionApplied = this.updateXmlConnectionStringsNodeAttribute(childNode) || isSubstitutionApplied;
+                }
             }
         }
         return isSubstitutionApplied;

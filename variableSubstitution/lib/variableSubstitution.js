@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
 const envVariableUtility_1 = require("./operations/envVariableUtility");
 const jsonVariableSubstitutionUtility_1 = require("./operations/jsonVariableSubstitutionUtility");
-const ltxDomUtility_1 = require("./operations/ltxDomUtility");
+const xmlDomUtility_1 = require("./operations/xmlDomUtility");
 const xmlVariableSubstitution_1 = require("./operations/xmlVariableSubstitution");
 const utility_1 = require("./operations/utility");
 const fs = require("fs");
@@ -61,12 +61,12 @@ function segregateFilesAndSubstitute(files) {
             }
             else if (isXml(file, fileContent)) {
                 console.log("Applying variable substitution on XML file: " + file);
-                let ltxDomUtilityInstance = fileContentCache.get(file);
-                let xmlSubstitution = new xmlVariableSubstitution_1.XmlSubstitution(ltxDomUtilityInstance);
+                let xmlDomUtilityInstance = fileContentCache.get(file);
+                let xmlSubstitution = new xmlVariableSubstitution_1.XmlSubstitution(xmlDomUtilityInstance);
                 let isXmlSubstitutionApplied = xmlSubstitution.substituteXmlVariables();
                 if (isXmlSubstitutionApplied) {
-                    let xmlDocument = replaceEscapeXMLCharacters(ltxDomUtilityInstance.getXmlDom());
-                    var domContent = (fileEncodeType.withBOM ? '\uFEFF' : '') + ltxDomUtilityInstance.getContentWithHeader(xmlDocument);
+                    let xmlDocument = replaceEscapeXMLCharacters(xmlDomUtilityInstance.getXmlDom());
+                    var domContent = (fileEncodeType.withBOM ? '\uFEFF' : '') + xmlDomUtilityInstance.getContentWithHeader(xmlDocument);
                     for (var replacableTokenValue in xmlSubstitution.replacableTokenValues) {
                         core.debug('Substituting original value in place of temp_name: ' + replacableTokenValue);
                         domContent = domContent.split(replacableTokenValue).join(xmlSubstitution.replacableTokenValues[replacableTokenValue]);
@@ -133,7 +133,7 @@ function isYaml(file, content) {
 }
 function isXml(file, content) {
     try {
-        let ltxDomUtiltiyInstance = new ltxDomUtility_1.LtxDomUtility(content);
+        let ltxDomUtiltiyInstance = new xmlDomUtility_1.XmlDomUtility(content);
         if (!fileContentCache.has(file)) {
             fileContentCache.set(file, ltxDomUtiltiyInstance);
         }
