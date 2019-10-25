@@ -1,9 +1,17 @@
-import * as core from "@actions/core";
+import core = require("@actions/core");
 
-function detectFileEncodingWithBOM(fileName: string, buffer: Buffer) {
+export interface fileEncoding {
+    encoding: string,
+    withBOM: boolean
+}
+
+function detectFileEncodingWithBOM(fileName: string, buffer: Buffer): fileEncoding {
     core.debug('Detecting file encoding using BOM');
     if(buffer.slice(0,3).equals(new Buffer([239, 187, 191]))) {
-        return ['utf-8', true];
+        return {
+            encoding: 'utf-8', 
+            withBOM: true
+        };
     }
     else if(buffer.slice(0,4).equals(new Buffer([255, 254, 0, 0]))) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32LE. Variable substitution is not supported with file encoding UTF-32LE. Supported encodings are UTF-8 and UTF-16LE.`);
@@ -12,7 +20,10 @@ function detectFileEncodingWithBOM(fileName: string, buffer: Buffer) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32BE. Variable substitution is not supported with file encoding UTF-32BE. Supported encodings are UTF-8 and UTF-16LE.`);
     }
     else if(buffer.slice(0,2).equals(new Buffer([255, 254]))) {
-        return ['utf-16le', true];
+        return {
+            encoding: 'utf-16le', 
+            withBOM: true
+        };
     }
     else if(buffer.slice(0,4).equals(new Buffer([0, 0, 254, 255]))) {
         throw Error(`Detected file encoding of the file ${fileName} as UTF-32BE. Variable substitution is not supported with file encoding UTF-32BE. Supported encodings are UTF-8 and UTF-16LE.`);
@@ -21,7 +32,7 @@ function detectFileEncodingWithBOM(fileName: string, buffer: Buffer) {
     return null;
 }
 
-function detectFileEncodingWithoutBOM(fileName: string, buffer: Buffer) {
+function detectFileEncodingWithoutBOM(fileName: string, buffer: Buffer): fileEncoding {
     core.debug('Detecting file encoding without BOM');
     var typeCode = 0;
     for(var index = 0; index < 4; index++) {
@@ -36,14 +47,21 @@ function detectFileEncodingWithoutBOM(fileName: string, buffer: Buffer) {
         case 8:
             throw Error(`Detected file encoding of the file ${fileName} as UTF-32LE. Variable substitution is not supported with file encoding UTF-32LE. Supported encodings are UTF-8 and UTF-16 LE.`);
         case 10:
-            return ['utf-16le', false];
+            return {
+                encoding: 'utf-16le',
+                withBOM: false
+            };
         case 15:
-            return ['utf-8', false];
+            return {
+                encoding: 'utf-8', 
+                withBOM: false
+            };
         default:
             throw Error(`Unable to detect encoding of the file ${fileName} (typeCode: ${typeCode}). Supported encodings are UTF-8 and UTF-16 LE.`);
     }
 }
-export function detectFileEncoding(fileName: string, buffer: Buffer) {
+
+export function detectFileEncoding(fileName: string, buffer: Buffer): fileEncoding {
     if(buffer.length < 4) {
         throw Error(`File buffer is too short to detect encoding type : ${fileName}`);
     }

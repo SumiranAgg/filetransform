@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(require("@actions/core"));
+const core = require("@actions/core");
 const os = __importStar(require("os"));
 const minimatch = __importStar(require("minimatch"));
 const fs = require("fs");

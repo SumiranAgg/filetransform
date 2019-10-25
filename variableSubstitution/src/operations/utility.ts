@@ -1,4 +1,4 @@
-import * as core from '@actions/core';
+import core = require("@actions/core");
 import * as os from 'os';
 import * as minimatch from 'minimatch';
 import fs = require('fs');

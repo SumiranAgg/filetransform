@@ -1,4 +1,4 @@
-import * as core from '@actions/core';
+import core = require('@actions/core');
 
 import { EnvTreeUtility } from "./operations/envVariableUtility";
 import { JsonSubstitution } from './operations/jsonVariableSubstitutionUtility';
@@ -7,8 +7,8 @@ import { XmlSubstitution } from './operations/xmlVariableSubstitution';
 import { findfiles } from "./operations/utility";
 
 import fs = require('fs');
-var yaml = require('js-yaml');
-var fileEncoding = require('./operations/fileEncodingUtility');
+import yaml = require('js-yaml');
+import fileEncoding = require('./operations/fileEncodingUtility');
 
 async function run() {
     let filesInput = core.getInput("files", { required: true });
@@ -33,8 +33,8 @@ function segregateFilesAndSubstitute(files: string[]) {
         for(let file of matchedFiles) {
             var fileBuffer: Buffer = fs.readFileSync(file);
             var fileEncodeType = fileEncoding.detectFileEncoding(file, fileBuffer);
-            var fileContent: string = fileBuffer.toString(fileEncodeType[0]);
-            if(fileEncodeType[1]) {
+            var fileContent: string = fileBuffer.toString(fileEncodeType.encoding);
+            if(fileEncodeType.withBOM) {
                 fileContent = fileContent.slice(1);
             }
             if(isJson(file, fileContent)) {
@@ -43,7 +43,7 @@ function segregateFilesAndSubstitute(files: string[]) {
                 let jsonObject = fileContentCache.get(file);
                 let isJsonSubstitutionApplied = jsonSubsitution.substituteJsonVariable(jsonObject, EnvTreeUtility.getEnvVarTree());
                 if(isJsonSubstitutionApplied) {
-                    fs.writeFileSync(file, (fileEncodeType[1] ? '\uFEFF' : '') + JSON.stringify(jsonObject, null, 4), { encoding: fileEncodeType[0] });
+                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + JSON.stringify(jsonObject, null, 4), { encoding: fileEncodeType.encoding });
                     console.log(`Successfully updated file: ${file}`);
                 }
                 else {
@@ -57,7 +57,7 @@ function segregateFilesAndSubstitute(files: string[]) {
                 let yamlObject = fileContentCache.get(file);
                 let isYamlSubstitutionApplied = jsonSubsitution.substituteJsonVariable(yamlObject, EnvTreeUtility.getEnvVarTree());
                 if(isYamlSubstitutionApplied) {
-                    fs.writeFileSync(file, (fileEncodeType[1] ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType[0] });
+                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType.encoding });
                     console.log(`Successfully updated config file: ${file}`);
                 }
                 else {
@@ -72,12 +72,12 @@ function segregateFilesAndSubstitute(files: string[]) {
                 let isXmlSubstitutionApplied = xmlSubstitution.substituteXmlVariables();
                 if(isXmlSubstitutionApplied) {
                     let xmlDocument = replaceEscapeXMLCharacters(ltxDomUtilityInstance.getXmlDom());
-                    var domContent = ( fileEncodeType[1]? '\uFEFF' : '' ) + ltxDomUtilityInstance.getContentWithHeader(xmlDocument);
+                    var domContent = ( fileEncodeType.withBOM? '\uFEFF' : '' ) + ltxDomUtilityInstance.getContentWithHeader(xmlDocument);
                     for(var replacableTokenValue in xmlSubstitution.replacableTokenValues) {
                         core.debug('Substituting original value in place of temp_name: ' + replacableTokenValue);
                         domContent = domContent.split(replacableTokenValue).join(xmlSubstitution.replacableTokenValues[replacableTokenValue]);
                     }
-                    fs.writeFileSync(file, domContent, { encoding: fileEncodeType[0] });
+                    fs.writeFileSync(file, domContent, { encoding: fileEncodeType.encoding });
                     console.log(`Successfully updated file: ${file}`);
                 }
                 else {
