@@ -49,20 +49,6 @@ function segregateFilesAndSubstitute(files: string[]) {
                     console.log('Skipped updating file: ' + file);
                 }
                 isSubstitutionApplied = isJsonSubstitutionApplied || isSubstitutionApplied;
-            }                
-            else if(isYaml(file, fileContent)) {
-                console.log("Applying variable substitution on YAML file: " + file);
-                let jsonSubsitution =  new JsonSubstitution();
-                let yamlObject = fileContentCache.get(file);
-                let isYamlSubstitutionApplied = jsonSubsitution.substituteJsonVariable(yamlObject, EnvTreeUtility.getEnvVarTree());
-                if(isYamlSubstitutionApplied) {
-                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType.encoding });
-                    console.log(`Successfully updated config file: ${file}`);
-                }
-                else {
-                    console.log('Skipped updating file: ' + file);
-                }
-                isSubstitutionApplied = isYamlSubstitutionApplied || isSubstitutionApplied;
             }
             else if(isXml(file, fileContent)) {
                 console.log("Applying variable substitution on XML file: " + file);   
@@ -83,6 +69,20 @@ function segregateFilesAndSubstitute(files: string[]) {
                     console.log('Skipped updating file: ' + file);
                 }
                 isSubstitutionApplied = isXmlSubstitutionApplied || isSubstitutionApplied;
+            }                
+            else if(isYaml(file, fileContent)) {
+                console.log("Applying variable substitution on YAML file: " + file);
+                let jsonSubsitution =  new JsonSubstitution();
+                let yamlObject = fileContentCache.get(file);
+                let isYamlSubstitutionApplied = jsonSubsitution.substituteJsonVariable(yamlObject, EnvTreeUtility.getEnvVarTree());
+                if(isYamlSubstitutionApplied) {
+                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType.encoding });
+                    console.log(`Successfully updated config file: ${file}`);
+                }
+                else {
+                    console.log('Skipped updating file: ' + file);
+                }
+                isSubstitutionApplied = isYamlSubstitutionApplied || isSubstitutionApplied;
             }
             else {
                 throw new Error("Could not parse file: " + file + "\n" + parseException);

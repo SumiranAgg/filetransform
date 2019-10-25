@@ -59,20 +59,6 @@ function segregateFilesAndSubstitute(files) {
                 }
                 isSubstitutionApplied = isJsonSubstitutionApplied || isSubstitutionApplied;
             }
-            else if (isYaml(file, fileContent)) {
-                console.log("Applying variable substitution on YAML file: " + file);
-                let jsonSubsitution = new jsonVariableSubstitutionUtility_1.JsonSubstitution();
-                let yamlObject = fileContentCache.get(file);
-                let isYamlSubstitutionApplied = jsonSubsitution.substituteJsonVariable(yamlObject, envVariableUtility_1.EnvTreeUtility.getEnvVarTree());
-                if (isYamlSubstitutionApplied) {
-                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType.encoding });
-                    console.log(`Successfully updated config file: ${file}`);
-                }
-                else {
-                    console.log('Skipped updating file: ' + file);
-                }
-                isSubstitutionApplied = isYamlSubstitutionApplied || isSubstitutionApplied;
-            }
             else if (isXml(file, fileContent)) {
                 console.log("Applying variable substitution on XML file: " + file);
                 let ltxDomUtilityInstance = fileContentCache.get(file);
@@ -92,6 +78,20 @@ function segregateFilesAndSubstitute(files) {
                     console.log('Skipped updating file: ' + file);
                 }
                 isSubstitutionApplied = isXmlSubstitutionApplied || isSubstitutionApplied;
+            }
+            else if (isYaml(file, fileContent)) {
+                console.log("Applying variable substitution on YAML file: " + file);
+                let jsonSubsitution = new jsonVariableSubstitutionUtility_1.JsonSubstitution();
+                let yamlObject = fileContentCache.get(file);
+                let isYamlSubstitutionApplied = jsonSubsitution.substituteJsonVariable(yamlObject, envVariableUtility_1.EnvTreeUtility.getEnvVarTree());
+                if (isYamlSubstitutionApplied) {
+                    fs.writeFileSync(file, (fileEncodeType.withBOM ? '\uFEFF' : '') + yaml.safeDump(yamlObject), { encoding: fileEncodeType.encoding });
+                    console.log(`Successfully updated config file: ${file}`);
+                }
+                else {
+                    console.log('Skipped updating file: ' + file);
+                }
+                isSubstitutionApplied = isYamlSubstitutionApplied || isSubstitutionApplied;
             }
             else {
                 throw new Error("Could not parse file: " + file + "\n" + parseException);
