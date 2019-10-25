@@ -9,7 +9,7 @@ export function findfiles(filepath: string){
 
     core.debug("Finding files matching input: " + filepath);
 
-    var filesList : string [];
+    let filesList : string [];
     if (filepath.indexOf('*') == -1 && filepath.indexOf('?') == -1) {
 
         // No pattern found, check literal path to a single file
@@ -22,10 +22,10 @@ export function findfiles(filepath: string){
         }
     } else {
         filepath = path.join(process.env.GITHUB_WORKSPACE, filepath);
-        var firstWildcardIndex = function(str: string) {
-            var idx = str.indexOf('*');
+        let firstWildcardIndex = function(str: string) {
+            let idx = str.indexOf('*');
 
-            var idxOfWildcard = str.indexOf('?');
+            let idxOfWildcard = str.indexOf('?');
             if (idxOfWildcard > -1) {
                 return (idx > -1) ?
                     Math.min(idx, idxOfWildcard) : idxOfWildcard;
@@ -38,10 +38,10 @@ export function findfiles(filepath: string){
         core.debug('Matching glob pattern: ' + filepath);
 
         // First find the most complete path without any matching patterns
-        var idx = firstWildcardIndex(filepath);
+        let idx = firstWildcardIndex(filepath);
         core.debug('Index of first wildcard: ' + idx);
-        var slicedPath = filepath.slice(0, idx);
-        var findPathRoot = path.dirname(slicedPath);
+        let slicedPath = filepath.slice(0, idx);
+        let findPathRoot = path.dirname(slicedPath);
         if(slicedPath.endsWith("\\") || slicedPath.endsWith("/")){
             findPathRoot = slicedPath;
         }
@@ -49,7 +49,7 @@ export function findfiles(filepath: string){
         core.debug('find root dir: ' + findPathRoot);
 
         // Now we get a list of all files under this root
-        var allFiles = find(findPathRoot);
+        let allFiles = find(findPathRoot);
 
         // Now matching the pattern against all files
         filesList = match(allFiles, filepath, '', {matchBase: true, nocase: !!os.type().match(/^Win/) });
@@ -128,7 +128,7 @@ function find(findPath: string): string[] {
                 let childItems: _FindItem[] =
                     fs.readdirSync(item.path)
                         .map((childName: string) => new _FindItem(path.join(item.path, childName), childLevel));
-                for (var i = childItems.length - 1; i >= 0; i--) {
+                for (let i = childItems.length - 1; i >= 0; i--) {
                     stack.push(childItems[i]);
                 }
             }
@@ -384,7 +384,7 @@ function normalizeSeparators(p: string): string {
 }
 
 function exist(path: string): boolean {
-    var exist = false;
+    let exist = false;
     try {
         exist = !!(path && fs.statSync(path) != null);
     } catch (err) {

@@ -39,9 +39,9 @@ function segregateFilesAndSubstitute(files) {
             continue;
         }
         for (let file of matchedFiles) {
-            var fileBuffer = fs.readFileSync(file);
-            var fileEncodeType = fileEncoding.detectFileEncoding(file, fileBuffer);
-            var fileContent = fileBuffer.toString(fileEncodeType.encoding);
+            let fileBuffer = fs.readFileSync(file);
+            let fileEncodeType = fileEncoding.detectFileEncoding(file, fileBuffer);
+            let fileContent = fileBuffer.toString(fileEncodeType.encoding);
             if (fileEncodeType.withBOM) {
                 fileContent = fileContent.slice(1);
             }
@@ -66,8 +66,8 @@ function segregateFilesAndSubstitute(files) {
                 let isXmlSubstitutionApplied = xmlSubstitution.substituteXmlVariables();
                 if (isXmlSubstitutionApplied) {
                     let xmlDocument = replaceEscapeXMLCharacters(xmlDomUtilityInstance.getXmlDom());
-                    var domContent = (fileEncodeType.withBOM ? '\uFEFF' : '') + xmlDomUtilityInstance.getContentWithHeader(xmlDocument);
-                    for (var replacableTokenValue in xmlSubstitution.replacableTokenValues) {
+                    let domContent = (fileEncodeType.withBOM ? '\uFEFF' : '') + xmlDomUtilityInstance.getContentWithHeader(xmlDocument);
+                    for (let replacableTokenValue in xmlSubstitution.replacableTokenValues) {
                         core.debug('Substituting original value in place of temp_name: ' + replacableTokenValue);
                         domContent = domContent.split(replacableTokenValue).join(xmlSubstitution.replacableTokenValues[replacableTokenValue]);
                     }
@@ -202,13 +202,19 @@ function replaceEscapeXMLCharacters(xmlDOMNode) {
     if (!xmlDOMNode || typeof xmlDOMNode == 'string') {
         return;
     }
-    for (var xmlAttribute in xmlDOMNode.attrs) {
-        xmlDOMNode.attrs[xmlAttribute] = xmlDOMNode.attrs[xmlAttribute].replace(/'/g, "APOS_CHARACTER_TOKEN");
+    if (xmlDOMNode.attributes) {
+        let xmlDomNodeAttributes = xmlDOMNode.attributes;
+        for (let xmlAttribute = 0; xmlAttribute < xmlDomNodeAttributes.length; xmlAttribute++) {
+            if (xmlDomNodeAttributes[xmlAttribute]) {
+                (xmlDomNodeAttributes[xmlAttribute]).nodeValue = ((xmlDomNodeAttributes[xmlAttribute]).nodeValue).replace(/'/g, "APOS_CHARACTER_TOKEN");
+            }
+        }
     }
-    for (var xmlChild of xmlDOMNode.children) {
-        replaceEscapeXMLCharacters(xmlChild);
+    if (xmlDOMNode.hasChildNodes()) {
+        let xmlDOMchildNodes = xmlDOMNode.childNodes;
+        for (let i = 0; i < xmlDOMchildNodes.length; i++) {
+            let xmlChild = xmlDOMchildNodes[i];
+            replaceEscapeXMLCharacters(xmlChild);
+        }
     }
 }
-run().catch((error) => {
-    core.setFailed(error);
-});

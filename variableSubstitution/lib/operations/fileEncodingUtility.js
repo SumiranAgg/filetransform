@@ -29,8 +29,8 @@ function detectFileEncodingWithBOM(fileName, buffer) {
 }
 function detectFileEncodingWithoutBOM(fileName, buffer) {
     core.debug('Detecting file encoding without BOM');
-    var typeCode = 0;
-    for (var index = 0; index < 4; index++) {
+    let typeCode = 0;
+    for (let index = 0; index < 4; index++) {
         typeCode = typeCode << 1;
         typeCode = typeCode | (buffer[index] > 0 ? 1 : 0);
     }
@@ -59,7 +59,7 @@ function detectFileEncoding(fileName, buffer) {
     if (buffer.length < 4) {
         throw Error(`File buffer is too short to detect encoding type : ${fileName}`);
     }
-    var fileEncoding = detectFileEncodingWithBOM(fileName, buffer) || detectFileEncodingWithoutBOM(fileName, buffer);
+    let fileEncoding = detectFileEncodingWithBOM(fileName, buffer) || detectFileEncodingWithoutBOM(fileName, buffer);
     return fileEncoding;
 }
 exports.detectFileEncoding = detectFileEncoding;

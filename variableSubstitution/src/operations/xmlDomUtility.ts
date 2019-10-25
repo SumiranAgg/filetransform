@@ -62,9 +62,9 @@ export class XmlDomUtility  {
     public getChildElementsByTagName(node, tagName) {
         if(!envVarUtility.isObject(node) )
             return [];
-        var liveNodes = [];
+        let liveNodes = [];
         if(node.hasChildNodes()){
-            var children = node.childNodes;
+            let children = node.childNodes;
             for(let i=0; i < children.length; i++ ){
                 let childName = children[i].nodeName;
                 if( !envVarUtility.isEmpty(childName) && tagName == childName){

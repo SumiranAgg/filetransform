@@ -14,7 +14,7 @@ const fs = require("fs");
 const path = require("path");
 function findfiles(filepath) {
     core.debug("Finding files matching input: " + filepath);
-    var filesList;
+    let filesList;
     if (filepath.indexOf('*') == -1 && filepath.indexOf('?') == -1) {
         // No pattern found, check literal path to a single file
         if (exist(filepath)) {
@@ -27,9 +27,9 @@ function findfiles(filepath) {
     }
     else {
         filepath = path.join(process.env.GITHUB_WORKSPACE, filepath);
-        var firstWildcardIndex = function (str) {
-            var idx = str.indexOf('*');
-            var idxOfWildcard = str.indexOf('?');
+        let firstWildcardIndex = function (str) {
+            let idx = str.indexOf('*');
+            let idxOfWildcard = str.indexOf('?');
             if (idxOfWildcard > -1) {
                 return (idx > -1) ?
                     Math.min(idx, idxOfWildcard) : idxOfWildcard;
@@ -39,16 +39,16 @@ function findfiles(filepath) {
         // Find app files matching the specified pattern
         core.debug('Matching glob pattern: ' + filepath);
         // First find the most complete path without any matching patterns
-        var idx = firstWildcardIndex(filepath);
+        let idx = firstWildcardIndex(filepath);
         core.debug('Index of first wildcard: ' + idx);
-        var slicedPath = filepath.slice(0, idx);
-        var findPathRoot = path.dirname(slicedPath);
+        let slicedPath = filepath.slice(0, idx);
+        let findPathRoot = path.dirname(slicedPath);
         if (slicedPath.endsWith("\\") || slicedPath.endsWith("/")) {
             findPathRoot = slicedPath;
         }
         core.debug('find root dir: ' + findPathRoot);
         // Now we get a list of all files under this root
-        var allFiles = find(findPathRoot);
+        let allFiles = find(findPathRoot);
         // Now matching the pattern against all files
         filesList = match(allFiles, filepath, '', { matchBase: true, nocase: !!os.type().match(/^Win/) });
         // Fail if no matching files were found
@@ -110,7 +110,7 @@ function find(findPath) {
                 let childLevel = item.level + 1;
                 let childItems = fs.readdirSync(item.path)
                     .map((childName) => new _FindItem(path.join(item.path, childName), childLevel));
-                for (var i = childItems.length - 1; i >= 0; i--) {
+                for (let i = childItems.length - 1; i >= 0; i--) {
                     stack.push(childItems[i]);
                 }
             }
@@ -312,7 +312,7 @@ function normalizeSeparators(p) {
     return p.replace(/\/\/+/g, '/');
 }
 function exist(path) {
-    var exist = false;
+    let exist = false;
     try {
         exist = !!(path && fs.statSync(path) != null);
     }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function isPredefinedVariable(variable) {
-    var predefinedVarPrefix = ['runner.', 'azure_http_user_agent', 'common.', 'system.'];
+    let predefinedVarPrefix = ['runner.', 'azure_http_user_agent', 'common.', 'system.'];
     for (let varPrefix of predefinedVarPrefix) {
         if (variable.toLowerCase().startsWith(varPrefix)) {
             return true;
@@ -11,8 +11,8 @@ function isPredefinedVariable(variable) {
 }
 exports.isPredefinedVariable = isPredefinedVariable;
 function getVariableMap() {
-    var variableMap = new Map();
-    var variables = process.env;
+    let variableMap = new Map();
+    let variables = process.env;
     Object.keys(variables).forEach(key => {
         if (!isPredefinedVariable(key)) {
             variableMap.set(key, variables[key]);
@@ -48,7 +48,7 @@ class EnvTreeUtility {
     createEnvTree(envVariables) {
         // __proto__ is marked as null, so that custom object can be assgined.
         // This replacement do not affect the JSON object, as no inbuilt JSON function is referenced.
-        var envVarTree = {
+        let envVarTree = {
             value: null,
             isEnd: false,
             child: {
@@ -56,8 +56,8 @@ class EnvTreeUtility {
             }
         };
         for (let [key, value] of envVariables.entries()) {
-            var envVarTreeIterator = envVarTree;
-            var envVariableNameArray = key.split('.');
+            let envVarTreeIterator = envVarTree;
+            let envVariableNameArray = key.split('.');
             for (let variableName of envVariableNameArray) {
                 if (envVarTreeIterator.child[variableName] === undefined || typeof envVarTreeIterator.child[variableName] === 'function') {
                     envVarTreeIterator.child[variableName] = {

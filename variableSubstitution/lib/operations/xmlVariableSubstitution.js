@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
-var envVarUtility = require('./envVariableUtility');
+let envVarUtility = require('./envVariableUtility');
 const tags = ["applicationSettings", "appSettings", "connectionStrings", "configSections"];
 class XmlSubstitution {
     constructor(xmlDomUtilityInstance) {
@@ -10,14 +10,14 @@ class XmlSubstitution {
         this.xmlDomUtility = xmlDomUtilityInstance;
     }
     substituteXmlVariables() {
-        var isSubstitutionApplied = false;
-        for (var tag of tags) {
-            var nodes = this.xmlDomUtility.getElementsByTagName(tag);
+        let isSubstitutionApplied = false;
+        for (let tag of tags) {
+            let nodes = this.xmlDomUtility.getElementsByTagName(tag);
             if (nodes.length == 0) {
                 core.debug("Unable to find node with tag '" + tag + "' in provided xml file.");
                 continue;
             }
-            for (var xmlNode of nodes) {
+            for (let xmlNode of nodes) {
                 if (envVarUtility.isObject(xmlNode)) {
                     console.log('Processing substitution for xml node: ', xmlNode.nodeName);
                     try {
@@ -41,15 +41,15 @@ class XmlSubstitution {
         return isSubstitutionApplied;
     }
     updateXmlConfigNodeAttribute(xmlNode) {
-        var isSubstitutionApplied = false;
-        var sections = this.xmlDomUtility.getChildElementsByTagName(xmlNode, "section");
-        for (var section of sections) {
+        let isSubstitutionApplied = false;
+        let sections = this.xmlDomUtility.getChildElementsByTagName(xmlNode, "section");
+        for (let section of sections) {
             if (envVarUtility.isObject(section)) {
-                var sectionName = section.attr('name');
+                let sectionName = section.attr('name');
                 if (!envVarUtility.isEmpty(sectionName)) {
-                    var customSectionNodes = this.xmlDomUtility.getElementsByTagName(sectionName);
+                    let customSectionNodes = this.xmlDomUtility.getElementsByTagName(sectionName);
                     if (customSectionNodes.length != 0) {
-                        var customNode = customSectionNodes[0];
+                        let customNode = customSectionNodes[0];
                         isSubstitutionApplied = this.updateXmlNodeAttribute(customNode) || isSubstitutionApplied;
                     }
                 }
@@ -58,7 +58,7 @@ class XmlSubstitution {
         return isSubstitutionApplied;
     }
     updateXmlNodeAttribute(xmlDomNode) {
-        var isSubstitutionApplied = false;
+        let isSubstitutionApplied = false;
         if (envVarUtility.isEmpty(xmlDomNode) || !envVarUtility.isObject(xmlDomNode) || xmlDomNode.name == "#comment") {
             core.debug("Provided node is empty or a comment.");
             return isSubstitutionApplied;
@@ -111,23 +111,23 @@ class XmlSubstitution {
         return isSubstitutionApplied;
     }
     updateXmlConnectionStringsNodeAttribute(xmlDomNode) {
-        var isSubstitutionApplied = false;
+        let isSubstitutionApplied = false;
         const ConfigFileConnStringToken = 'CONFIG_FILE_CONN_STRING_TOKEN';
         if (envVarUtility.isEmpty(xmlDomNode) || !envVarUtility.isObject(xmlDomNode) || xmlDomNode.name == "#comment") {
             core.debug("Provided node is empty or a comment.");
             return isSubstitutionApplied;
         }
-        var xmlDomNodeAttributes = xmlDomNode.attrs;
+        let xmlDomNodeAttributes = xmlDomNode.attrs;
         if (xmlDomNodeAttributes.hasOwnProperty("connectionString")) {
             if (xmlDomNodeAttributes.hasOwnProperty("name") && this.variableMap[xmlDomNodeAttributes.name]) {
-                var ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(' + xmlDomNodeAttributes.name + ')';
+                let ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(' + xmlDomNodeAttributes.name + ')';
                 core.debug(`Substituting connectionString value for connectionString= ${xmlDomNodeAttributes.name} with token value: ${ConfigFileConnStringTokenName}`);
                 xmlDomNode.attr("connectionString", ConfigFileConnStringTokenName);
                 this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap[xmlDomNodeAttributes.name].replace(/"/g, "'");
                 isSubstitutionApplied = true;
             }
             else if (this.variableMap["connectionString"] != undefined) {
-                var ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(connectionString)';
+                let ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(connectionString)';
                 core.debug(`Substituting connectionString value for connectionString= ${xmlDomNodeAttributes.name} with token value: ${ConfigFileConnStringTokenName}`);
                 xmlDomNode.attr("connectionString", ConfigFileConnStringTokenName);
                 this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap["connectionString"].replace(/"/g, "'");
