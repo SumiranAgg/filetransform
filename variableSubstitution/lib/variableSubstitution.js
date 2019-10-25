@@ -16,7 +16,6 @@ const ltxDomUtility_1 = require("./operations/ltxDomUtility");
 const xmlVariableSubstitution_1 = require("./operations/xmlVariableSubstitution");
 const utility_1 = require("./operations/utility");
 const fs = require("fs");
-const path = require("path");
 const yaml = require("js-yaml");
 const fileEncoding = require("./operations/fileEncodingUtility");
 function run() {
@@ -34,7 +33,7 @@ function run() {
 function segregateFilesAndSubstitute(files) {
     let isSubstitutionApplied = false;
     for (let file of files) {
-        let matchedFiles = utility_1.findfiles(path.join(process.env.GITHUB_WORKSPACE, file.trim()));
+        let matchedFiles = utility_1.findfiles(file.trim());
         if (matchedFiles.length == 0) {
             core.error('No file matched with specific pattern: ' + file);
             continue;

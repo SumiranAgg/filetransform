@@ -21,6 +21,7 @@ export function findfiles(filepath: string){
             return [];
         }
     } else {
+        filepath = path.join(process.env.GITHUB_WORKSPACE, filepath);
         var firstWildcardIndex = function(str: string) {
             var idx = str.indexOf('*');
 
