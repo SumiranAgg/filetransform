@@ -22,6 +22,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         let filesInput = core.getInput("files", { required: true });
         let files = filesInput.split(",");
+        console.log(files);
         if (files.length > 0) {
             segregateFilesAndSubstitute(files);
         }

@@ -13,7 +13,7 @@ import fileEncoding = require('./operations/fileEncodingUtility');
 async function run() {
     let filesInput = core.getInput("files", { required: true });
     let files = filesInput.split(",");
-
+console.log(files);
     if(files.length > 0){
         segregateFilesAndSubstitute(files);
     }
