@@ -23,7 +23,7 @@ export class XmlSubstitution {
             }
             for(let xmlNode of nodes) {
                 if(envVarUtility.isObject(xmlNode)){
-                    console.log('Processing substitution for xml node: ' , xmlNode.nodeName);
+                    console.log('Processing substitution for xml node: ' , xmlNode.name);
                     try {
                         if(xmlNode.name == "configSections") {
                             isSubstitutionApplied = this.updateXmlConfigNodeAttribute(xmlNode) || isSubstitutionApplied;
@@ -35,7 +35,7 @@ export class XmlSubstitution {
                             isSubstitutionApplied = this.updateXmlNodeAttribute(xmlNode) || isSubstitutionApplied;
                         }
                     } catch (error){
-                        core.debug("Error occurred while processing xml node : " + xmlNode.nodeName);
+                        core.debug("Error occurred while processing xml node : " + xmlNode.name);
                         core.debug(error);
                     }
                 }  
@@ -87,7 +87,7 @@ export class XmlSubstitution {
                 } else {
                     let children = xmlDomNode.children;
                     for(var childNode of children) {
-                        if(envVarUtility.isObject(childNode) && childNode.nodeName == attributeName) {
+                        if(envVarUtility.isObject(childNode) && childNode.name == attributeName) {
                             if (childNode.children.length === 1) {
                                 console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
                                 childNode.children[0] = ConfigFileAppSettingsTokenName;
