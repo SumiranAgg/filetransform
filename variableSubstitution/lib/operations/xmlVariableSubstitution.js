@@ -87,10 +87,10 @@ class XmlSubstitution {
                             }
                         }
                     }
-                    if (isValueReplaced) {
-                        this.replacableTokenValues[ConfigFileAppSettingsTokenName] = this.variableMap.get(attributeNameValue).replace(/"/g, "'");
-                        isSubstitutionApplied = true;
-                    }
+                }
+                if (isValueReplaced) {
+                    this.replacableTokenValues[ConfigFileAppSettingsTokenName] = this.variableMap.get(attributeNameValue).replace(/"/g, "'");
+                    isSubstitutionApplied = true;
                 }
             }
         }

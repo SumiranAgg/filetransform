@@ -92,6 +92,7 @@ export class XmlSubstitution {
                                 console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
                                 childNode.children[0] = ConfigFileAppSettingsTokenName;
                                 isValueReplaced = true;
+                            }
                         }
                     }
                 }
@@ -99,7 +100,6 @@ export class XmlSubstitution {
                 if(isValueReplaced) {
                     this.replacableTokenValues[ConfigFileAppSettingsTokenName] =  this.variableMap.get(attributeNameValue).replace(/"/g, "'");
                     isSubstitutionApplied = true;
-                    }
                 }
             }
         }
