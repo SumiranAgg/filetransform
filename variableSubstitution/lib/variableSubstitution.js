@@ -65,7 +65,8 @@ function segregateFilesAndSubstitute(files) {
                 let xmlSubstitution = new xmlVariableSubstitution_1.XmlSubstitution(xmlDomUtilityInstance);
                 let isXmlSubstitutionApplied = xmlSubstitution.substituteXmlVariables();
                 if (isXmlSubstitutionApplied) {
-                    let xmlDocument = replaceEscapeXMLCharacters(xmlDomUtilityInstance.getXmlDom());
+                    let xmlDocument = xmlDomUtilityInstance.getXmlDom();
+                    replaceEscapeXMLCharacters(xmlDocument);
                     let domContent = (fileEncodeType.withBOM ? '\uFEFF' : '') + xmlDomUtilityInstance.getContentWithHeader(xmlDocument);
                     for (let replacableTokenValue in xmlSubstitution.replacableTokenValues) {
                         core.debug('Substituting original value in place of temp_name: ' + replacableTokenValue);
