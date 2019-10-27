@@ -79,7 +79,7 @@ export class XmlSubstitution {
                 let attributeNameValue = (attribute.nodeName === "key" || attribute.nodeName == "name") ? attribute.nodeValue : attribute.nodeName;
                 let attributeName = (attribute.nodeName === "key" || attribute.nodeName == "name") ? "value" : attribute.nodeName;
     
-                if(this.variableMap[attributeNameValue] != undefined) {
+                if(this.variableMap.get(attributeNameValue) != undefined) {
                     let ConfigFileAppSettingsTokenName = ConfigFileAppSettingsToken + '(' + attributeNameValue + ')';
                     let isValueReplaced: boolean = false;
                     if (xmlDomNode.hasAttribute(attributeName)) {
@@ -103,7 +103,7 @@ export class XmlSubstitution {
                     }
     
                     if(isValueReplaced) {
-                        this.replacableTokenValues[ConfigFileAppSettingsTokenName] =  this.variableMap[attributeNameValue].replace(/"/g, "'");
+                        this.replacableTokenValues[ConfigFileAppSettingsTokenName] =  this.variableMap.get(attributeNameValue).replace(/"/g, "'");
                         isSubstitutionApplied = true;
                     }
                 }
@@ -131,18 +131,18 @@ export class XmlSubstitution {
         let xmlDomNodeAttributes = xmlDomNode.attrs;
     
         if(xmlDomNodeAttributes.hasOwnProperty("connectionString")) {
-            if(xmlDomNodeAttributes.hasOwnProperty("name") && this.variableMap[xmlDomNodeAttributes.name]) {
+            if(xmlDomNodeAttributes.hasOwnProperty("name") && this.variableMap.get(xmlDomNodeAttributes.name)) {
                 let ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(' + xmlDomNodeAttributes.name + ')';
                 core.debug(`Substituting connectionString value for connectionString= ${xmlDomNodeAttributes.name} with token value: ${ConfigFileConnStringTokenName}`);
                 xmlDomNode.attr("connectionString", ConfigFileConnStringTokenName);
-                this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap[xmlDomNodeAttributes.name].replace(/"/g, "'");
+                this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap.get(xmlDomNodeAttributes.name).replace(/"/g, "'");
                 isSubstitutionApplied = true;
             }
-            else if(this.variableMap["connectionString"] != undefined) {
+            else if(this.variableMap.get("connectionString") != undefined) {
                 let ConfigFileConnStringTokenName = ConfigFileConnStringToken + '(connectionString)';
                 core.debug(`Substituting connectionString value for connectionString= ${xmlDomNodeAttributes.name} with token value: ${ConfigFileConnStringTokenName}`);
                 xmlDomNode.attr("connectionString", ConfigFileConnStringTokenName);
-                this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap["connectionString"].replace(/"/g, "'");
+                this.replacableTokenValues[ConfigFileConnStringTokenName] = this.variableMap.get("connectionString").replace(/"/g, "'");
                 isSubstitutionApplied = true
             }
         }
