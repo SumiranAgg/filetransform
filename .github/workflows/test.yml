@@ -17,6 +17,7 @@ jobs:
         auth.key3.subkey1: "hi"
         AdminUserName: "ProdAdminName"
         AdminPassword: "mypassword"
+        entityFramework: "test"
 
     - run: |
         cat ./Application/test.json
