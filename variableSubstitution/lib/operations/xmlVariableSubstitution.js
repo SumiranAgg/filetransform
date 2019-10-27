@@ -64,31 +64,26 @@ class XmlSubstitution {
             return isSubstitutionApplied;
         }
         const ConfigFileAppSettingsToken = 'CONFIG_FILE_SETTINGS_TOKEN';
-        if (xmlDomNode.attributes) {
-            let xmlDomNodeAttributes = xmlDomNode.attributes;
-            for (let i = 0; i < xmlDomNodeAttributes.length; i++) {
-                let attribute = xmlDomNodeAttributes[i];
-                let attributeNameValue = (attribute.nodeName === "key" || attribute.nodeName == "name") ? attribute.nodeValue : attribute.nodeName;
-                let attributeName = (attribute.nodeName === "key" || attribute.nodeName == "name") ? "value" : attribute.nodeName;
-                if (this.variableMap.get(attributeNameValue) != undefined) {
-                    let ConfigFileAppSettingsTokenName = ConfigFileAppSettingsToken + '(' + attributeNameValue + ')';
-                    let isValueReplaced = false;
-                    if (xmlDomNode.hasAttribute(attributeName)) {
-                        console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
-                        xmlDomNode.setAttribute(attributeName, ConfigFileAppSettingsTokenName);
-                        isValueReplaced = true;
-                    }
-                    else if (xmlDomNode.hasChildNodes()) {
-                        let children = xmlDomNode.childNodes;
-                        for (let childs = 0; childs < children.length; childs++) {
-                            let childNode = children[childs];
-                            if (envVarUtility.isObject(childNode) && childNode.nodeName == attributeName) {
-                                if (childNode.childNodes.length === 1) {
-                                    console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
-                                    childNode.childNodes[0].nodeValue = ConfigFileAppSettingsTokenName;
-                                    childNode.childNodes[0].data = ConfigFileAppSettingsTokenName;
-                                    isValueReplaced = true;
-                                }
+        let xmlDomNodeAttributes = xmlDomNode.attrs;
+        for (var attributeName in xmlDomNodeAttributes) {
+            var attributeNameValue = (attributeName === "key" || attributeName == "name") ? xmlDomNodeAttributes[attributeName] : attributeName;
+            var attributeName = (attributeName === "key" || attributeName == "name") ? "value" : attributeName;
+            if (this.variableMap.get(attributeNameValue) != undefined) {
+                let ConfigFileAppSettingsTokenName = ConfigFileAppSettingsToken + '(' + attributeNameValue + ')';
+                let isValueReplaced = false;
+                if (xmlDomNode.getAttr(attributeName) != undefined) {
+                    console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
+                    xmlDomNode.attr(attributeName, ConfigFileAppSettingsTokenName);
+                    isValueReplaced = true;
+                }
+                else {
+                    let children = xmlDomNode.children;
+                    for (var childNode of children) {
+                        if (envVarUtility.isObject(childNode) && childNode.nodeName == attributeName) {
+                            if (childNode.children.length === 1) {
+                                console.log(`Updating value for key: ${attributeNameValue} with token value: ${ConfigFileAppSettingsTokenName}`);
+                                childNode.children[0] = ConfigFileAppSettingsTokenName;
+                                isValueReplaced = true;
                             }
                         }
                     }
@@ -99,13 +94,10 @@ class XmlSubstitution {
                 }
             }
         }
-        if (xmlDomNode.hasChildNodes()) {
-            let children = xmlDomNode.childNodes;
-            for (let childs = 0; childs < children.length; childs++) {
-                let childNode = children[childs];
-                if (envVarUtility.isObject(childNode)) {
-                    isSubstitutionApplied = this.updateXmlNodeAttribute(childNode) || isSubstitutionApplied;
-                }
+        let children = xmlDomNode.children;
+        for (var childNode of children) {
+            if (envVarUtility.isObject(childNode)) {
+                isSubstitutionApplied = this.updateXmlNodeAttribute(childNode) || isSubstitutionApplied;
             }
         }
         return isSubstitutionApplied;
@@ -134,13 +126,10 @@ class XmlSubstitution {
                 isSubstitutionApplied = true;
             }
         }
-        if (xmlDomNode.hasChildNodes()) {
-            let children = xmlDomNode.childNodes;
-            for (let childs = 0; childs < children.length; childs++) {
-                let childNode = children[childs];
-                if (envVarUtility.isObject(childNode)) {
-                    isSubstitutionApplied = this.updateXmlConnectionStringsNodeAttribute(childNode) || isSubstitutionApplied;
-                }
+        let children = xmlDomNode.children;
+        for (var childNode of children) {
+            if (envVarUtility.isObject(childNode)) {
+                isSubstitutionApplied = this.updateXmlConnectionStringsNodeAttribute(childNode) || isSubstitutionApplied;
             }
         }
         return isSubstitutionApplied;

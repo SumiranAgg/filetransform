@@ -1,14 +1,17 @@
 var envVarUtility = require("./envVariableUtility");
-var DOMParser = require('xmldom').DOMParser;
+var ltx = require('ltx');
 
 export class XmlDomUtility  {
 
     private xmlDomLookUpTable = {};
+    private headerContent;
     private xmlDom;
 
     public constructor(xmlContent) {
         this.xmlDomLookUpTable = {};
-        this.xmlDom = new DOMParser().parseFromString(xmlContent,"text/xml");
+        this.headerContent = null;
+        this.xmlDom = ltx.parse(xmlContent);
+        this.readHeader(xmlContent);
         this.buildLookUpTable(this.xmlDom);
     }
 
@@ -16,8 +19,18 @@ export class XmlDomUtility  {
         return this.xmlDom;
     }
 
+    private readHeader(xmlContent) {
+        let index = xmlContent.indexOf('\n');
+        if(index > -1) {
+            let firstLine = xmlContent.substring(0,index).trim();
+            if(firstLine.startsWith("<?") && firstLine.endsWith("?>")) {
+                this.headerContent = firstLine;
+            }
+        }
+    }
+
     public getContentWithHeader(xmlDom) {
-        return xmlDom ? xmlDom.toString() : "";
+        return xmlDom ? (this.headerContent ? this.headerContent + "\n" : "") + xmlDom.root().toString() : "";
     }
 
     /**
@@ -25,18 +38,20 @@ export class XmlDomUtility  {
      */
     private buildLookUpTable(node) {
         if(node){
-            let nodeName = node.nodeName;
+            let nodeName = node.name;
             if(nodeName){
                 nodeName = nodeName.toLowerCase();
                 let listOfNodes = this.xmlDomLookUpTable[nodeName];
                 if(listOfNodes == null || !(Array.isArray(listOfNodes))) {
-                    this.xmlDomLookUpTable[nodeName] = [];
+                    listOfNodes = [];
+                    this.xmlDomLookUpTable[nodeName] = listOfNodes;
                 }
-                (this.xmlDomLookUpTable[nodeName]).push(node);
-                if(node.hasChildNodes()) {
-                    let children = node.childNodes;
-                    for(let i=0 ; i < children.length; i++) {
-                        this.buildLookUpTable(children[i]);
+                listOfNodes.push(node);
+                let childNodes = node.children;
+                for(let i=0 ; i < childNodes.length; i++){
+                    let childNodeName = childNodes[i].name;
+                    if(childNodeName) {
+                        this.buildLookUpTable(childNodes[i]);
                     }
                 }
             }
@@ -62,11 +77,11 @@ export class XmlDomUtility  {
     public getChildElementsByTagName(node, tagName) {
         if(!envVarUtility.isObject(node) )
             return [];
+        let children = node.children;
         let liveNodes = [];
-        if(node.hasChildNodes()){
-            let children = node.childNodes;
-            for(let i=0; i < children.length; i++ ){
-                let childName = children[i].nodeName;
+        if(children){
+            for( let i=0; i < children.length; i++ ){
+                let childName = children[i].name;
                 if( !envVarUtility.isEmpty(childName) && tagName == childName){
                     liveNodes.push(children[i]);
                 }
