@@ -209,22 +209,12 @@ function replaceEscapeXMLCharacters(xmlDOMNode) {
         return;
     }
 
-    if(xmlDOMNode.attributes) {
-        let xmlDomNodeAttributes = xmlDOMNode.attributes;
-        for(let xmlAttribute = 0 ; xmlAttribute < xmlDomNodeAttributes.length; xmlAttribute ++) {
-            if(xmlDomNodeAttributes[xmlAttribute]) {
-                (xmlDomNodeAttributes[xmlAttribute]).nodeValue = ((xmlDomNodeAttributes[xmlAttribute]).nodeValue).replace(/'/g, "APOS_CHARACTER_TOKEN");
-            }
-        }
+    for(var xmlAttribute in xmlDOMNode.attrs) {
+        xmlDOMNode.attrs[xmlAttribute] = xmlDOMNode.attrs[xmlAttribute].replace(/'/g, "APOS_CHARACTER_TOKEN");
     }
 
-    if(xmlDOMNode.hasChildNodes())
-    {
-        let xmlDOMchildNodes = xmlDOMNode.childNodes;
-        for (let i = 0; i <xmlDOMchildNodes.length; i++) {
-            let xmlChild = xmlDOMchildNodes[i];
-            replaceEscapeXMLCharacters(xmlChild);
-        }
+    for(var xmlChild of xmlDOMNode.children) {
+        replaceEscapeXMLCharacters(xmlChild);
     }
 }
 
