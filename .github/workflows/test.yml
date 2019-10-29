@@ -9,7 +9,7 @@ jobs:
 
     - uses: ./variableSubstitution
       with:
-        files: 'Application/*.json, Application/*.yaml, ./Application/SampleWebApplication/We?.config'
+        files: 'Application/*.json, Application/*.yaml, ./Application/SampleWebApplication/We*.config'
       env:
         auth.key1: "values1"
         auth.key2: "values2"
